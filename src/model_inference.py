@@ -1,14 +1,14 @@
-import numpy as np
-import onnxruntime as ort
 import os
-import requests
-import torchvision
-from PIL.JpegImagePlugin import JpegImageFile
-from scipy.special import softmax
 from typing import Callable
 from typing import Tuple
 
+import numpy as np
+import onnxruntime as ort
+from PIL.JpegImagePlugin import JpegImageFile
+from scipy.special import softmax
+
 import constants as const
+import input_transform
 
 
 class ONNXInference:
@@ -36,22 +36,9 @@ class ONNXInference:
         :param image: Pillow JpegImageFile, image input
         :return:      np.array, softmax output
         """
-        input_data = np.expand_dims(self.preprocess(image).numpy(), 0)
+        input_data = np.expand_dims(self.preprocess(image), 0)
         outputs = self.ort_sess.run(output_names=[self.output_name], input_feed={self.input_name: input_data})
         return softmax(outputs).ravel()
-
-
-def get_input_transform(image_size: int, img_normalize: dict) -> torchvision.transforms.Compose:
-    """
-    Get torchvision transform pipeline for an input
-    :param image_size:    int, image size for resizing
-    :param img_normalize: dict with mean and std for image normalization
-    :return:
-    """
-    transform_list = [torchvision.transforms.Resize(size=(image_size, image_size)),
-                      torchvision.transforms.ToTensor(),
-                      torchvision.transforms.Normalize(mean=img_normalize['mean'], std=img_normalize['std'])]
-    return torchvision.transforms.Compose(transform_list)
 
 
 def get_confidence_dict(class_map: dict, model_output: np.array) -> dict:
@@ -59,7 +46,7 @@ def get_confidence_dict(class_map: dict, model_output: np.array) -> dict:
     Get confidence dict
     :param class_map: dict
     :param model_output: np.array
-    :return:
+    :return: dict
     """
     conf_dict = dict()
     for i, conf in enumerate(model_output):
@@ -67,29 +54,17 @@ def get_confidence_dict(class_map: dict, model_output: np.array) -> dict:
     return conf_dict
 
 
-def download_weights() -> None:
-    """
-    Download ONNX weights if necessary
-    :return: None
-    """
-    os.makedirs("onnx_model", exist_ok=True)
-    for name in const.models_names:
-        if name not in os.listdir("onnx_model"):
-            r = requests.get(const.download_url + name)
-            open(os.path.join("onnx_model", name), 'wb').write(r.content)
-
-
 def do_inference(pil_image: JpegImageFile) -> Tuple[dict, dict]:
     """
     Do the inference
     :param pil_image: JpegImageFile
-    :return: dict, dict
+    :return: (dict, dict)
     """
     onnx_bin_instance = ONNXInference(
         onnx_model_name=os.path.join("onnx_model", const.onnx_bin_config["onnx_model"]),
         input_name="mobilenetv2_input",
         output_name="mobilenetv2_output",
-        preprocess=get_input_transform(image_size=const.image_size, img_normalize=const.img_normalize),
+        preprocess=input_transform.get_input_transform(image_size=const.image_size, img_normalize=const.img_normalize),
         class_map=const.onnx_bin_config["class_map"]
     )
     bin_result = get_confidence_dict(class_map=const.onnx_bin_config['class_map'],
@@ -99,7 +74,7 @@ def do_inference(pil_image: JpegImageFile) -> Tuple[dict, dict]:
         onnx_model_name=os.path.join("onnx_model", const.onnx_eurg_config["onnx_model"]),
         input_name="mobilenetv2_input",
         output_name="mobilenetv2_output",
-        preprocess=get_input_transform(image_size=const.image_size, img_normalize=const.img_normalize),
+        preprocess=input_transform.get_input_transform(image_size=const.image_size, img_normalize=const.img_normalize),
         class_map=const.onnx_eurg_config["class_map"]
     )
     eurg_result = get_confidence_dict(class_map=const.onnx_eurg_config['class_map'],
