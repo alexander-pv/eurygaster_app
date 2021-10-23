@@ -2,10 +2,11 @@ import streamlit as st
 from PIL import Image
 
 import model_inference
+import utils
 
 
 def app() -> None:
-    model_inference.download_weights()
+    utils.download_weights()
     st.write("""
              # Eurygaster spp. classification
              """
