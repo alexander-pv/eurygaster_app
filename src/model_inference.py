@@ -1,12 +1,12 @@
-import os
-from typing import Callable
-from typing import Tuple
-
 import numpy as np
 import onnxruntime as ort
+import os
+import requests
 import torchvision
 from PIL.JpegImagePlugin import JpegImageFile
 from scipy.special import softmax
+from typing import Callable
+from typing import Tuple
 
 import constants as const
 
@@ -65,6 +65,18 @@ def get_confidence_dict(class_map: dict, model_output: np.array) -> dict:
     for i, conf in enumerate(model_output):
         conf_dict.update({class_map[i]: "%.3f" % conf})
     return conf_dict
+
+
+def download_weights() -> None:
+    """
+    Download ONNX weights if necessary
+    :return: None
+    """
+    os.makedirs("onnx_model", exist_ok=True)
+    for name in const.models_names:
+        if name not in os.listdir("onnx_model"):
+            r = requests.get(const.download_url + name)
+            open(os.path.join("onnx_model", name), 'wb').write(r.content)
 
 
 def do_inference(pil_image: JpegImageFile) -> Tuple[dict, dict]:
