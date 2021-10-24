@@ -1,7 +1,7 @@
 binary_model_hash = "7dea07bbbad4bc69a33be5768672cb40ef60c344"
 multiclass_model_hash = "7e474b5aec7d7cf0b779c969307cd0997f6708aa"
 
-download_url = "https://github.com/alexander-pv/eurygaster_app/releases/download/v1.0.0/"
+download_url = "https://github.com/alexander-pv/eurygaster_app/releases/download/v1.1.0/"
 models_names = [f"model_{binary_model_hash}_binary_calib.onnx",
                 f"model_{multiclass_model_hash}_multiclass_calib.onnx"
                 ]
