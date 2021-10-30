@@ -1,3 +1,5 @@
+import os
+
 import streamlit as st
 from PIL import Image
 
@@ -21,6 +23,9 @@ def app() -> None:
         st.write(bin_result)
         st.write('Confidence distribution of species if Eurygaster is in the picture:')
         st.write(eurg_result)
+
+        if int(os.environ["UPLOAD_IMAGES"]):
+            utils.dropbox_upload(file)
     else:
         st.text("No image input")
 
