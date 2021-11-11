@@ -24,3 +24,6 @@ onnx_eurg_config = {"onnx_model": f"model_{multiclass_model_hash}_multiclass_cal
                     }
 image_size = 300
 img_normalize = {"mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225]}
+
+upload_images = False
+upload_path = ""

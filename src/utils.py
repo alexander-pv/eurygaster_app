@@ -1,11 +1,28 @@
 import os
 from datetime import datetime
+from typing import Union
 
 import dropbox
 import requests
+from PIL import Image, UnidentifiedImageError
+from PIL.JpegImagePlugin import JpegImageFile
 from streamlit.uploaded_file_manager import UploadedFile
 
 import constants as const
+
+
+def open_image(file: UploadedFile) -> Union[JpegImageFile, None]:
+    """
+    Open an image with PIL.Image
+    :param file: streamlit UploadedFile
+    :return: JpegImageFile or None
+    """
+
+    try:
+        img = Image.open(file)
+    except UnidentifiedImageError:
+        img = None
+    return img
 
 
 def get_datetime() -> str:
@@ -33,7 +50,7 @@ def download_weights() -> None:
 
 def dropbox_upload(file: UploadedFile) -> None:
     """
-    Upload data to dropbox
+    Upload image to dropbox
     :param file: streamlit UploadedFile
     :return: None
     """
@@ -43,3 +60,13 @@ def dropbox_upload(file: UploadedFile) -> None:
                         path=f"/{get_datetime()}_{file.name}",
                         mode=dropbox.files.WriteMode("overwrite")
                         )
+
+
+def image_upload(file: UploadedFile) -> None:
+    """
+    Save image to a specified directory
+    :param file: streamlit UploadedFile
+    :return: None
+    """
+    with open(os.path.join(const.upload_path, f"{get_datetime()}_{file.name}"), 'wb') as f:
+        f.write(file.getvalue())
