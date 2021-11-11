@@ -68,5 +68,8 @@ def image_upload(file: UploadedFile) -> None:
     :param file: streamlit UploadedFile
     :return: None
     """
-    with open(os.path.join(const.upload_path, f"{get_datetime()}_{file.name}"), 'wb') as f:
-        f.write(file.getvalue())
+    if os.environ.get("DROPBOX_UPLOAD"):
+        dropbox_upload(file=file)
+    else:
+        with open(os.path.join(const.docker_upload_path, f"{get_datetime()}_{file.name}"), 'wb') as f:
+            f.write(file.getvalue())

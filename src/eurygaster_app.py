@@ -27,6 +27,7 @@ def app() -> None:
 
             if const.upload_images:
                 utils.image_upload(file)
+
         else:
             st.write("The input contains undefined data. Perhaps it is a masked file of another data type.")
     else:
