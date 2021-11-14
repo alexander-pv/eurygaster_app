@@ -1,4 +1,5 @@
 import os
+import glob
 from datetime import datetime
 from typing import Union
 
@@ -71,5 +72,34 @@ def image_upload(file: UploadedFile) -> None:
     if os.environ.get("DROPBOX_UPLOAD"):
         dropbox_upload(file=file)
     else:
+        check_folder(path=const.docker_upload_path)
         with open(os.path.join(const.docker_upload_path, f"{get_datetime()}_{file.name}"), 'wb') as f:
             f.write(file.getvalue())
+
+
+def get_mb_folder_size(folder_path: str) -> float:
+    """
+    Evaluate folder filesize in Mb
+    :param folder_path: str
+    :return: float
+    """
+    directory_size = 0.0
+    for (path, dirs, files) in os.walk(folder_path):
+        for file in files:
+            filename = os.path.join(path, file)
+            directory_size += os.path.getsize(filename)
+    return directory_size / (1024 ** 2)
+
+
+def check_folder(path: str) -> None:
+    """
+    Check save folder and clear it if necessary
+    :param path: str
+    :return: None
+    """
+
+    mbs = get_mb_folder_size(path)
+    if mbs > const.upload_folder_mb_limit:
+        files = glob.glob(os.path.join(path, "*"))
+        for f in files:
+            os.remove(f)

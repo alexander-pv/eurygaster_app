@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    ports:
+      - "0.0.0.0:8501:8501"
+    volumes:
+      - eurygaster_volume:/app/uploads
+volumes:
+  eurygaster_volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${MOUNTING_VOLUME}
