@@ -28,4 +28,5 @@ image_size = 300
 img_normalize = {"mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225]}
 
 upload_images = True
+upload_folder_mb_limit = 10240
 docker_upload_path = os.path.join("/", "app", "uploads")
