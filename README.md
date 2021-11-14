@@ -15,7 +15,7 @@
 $ docker build -t eurygaster_app:latest
 $ docker run --rm -t -d -p 8051:8051 --name eurygaster_app eurygaster_app:latest
 
-# Create container with Docker-compose
+# Create container with Docker-compose. It automatically creates volume and mount image uploads to it.
 $ mkdir /home/eurygaster_uploads
 $ docker-compose up
 # Now, all the images uploaded to application for inference can be seen in /home/eurygaster_uploads folder
