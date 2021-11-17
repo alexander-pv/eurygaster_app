@@ -12,14 +12,21 @@
 
 ```bash
 # Create container with Dockerfile
-$ docker build -t eurygaster_app:latest
-$ docker run --rm -t -d -p 8051:8051 --name eurygaster_app eurygaster_app:latest
+$ docker build -t eurygaster_app:latest .
+# Create subnet for application, set static ip and run the app
+$ docker network create --subnet=172.55.0.0/29 eurygaster_subnet
+$ docker run --net eurygaster_subnet \
+             --ip 172.55.0.2 -p 8051:8051 --rm -t -d \
+             -v /home/${USER}/eurygaster_uploads:/app/uploads \
+             --name eurygaster_app eurygaster_app:latest
 
 # Create container with Docker-compose. It automatically creates volume and mount image uploads to it.
-$ mkdir /home/eurygaster_uploads
+# Assume, that we have /home/${USER}/eurygaster_uploads directory
+$ mkdir /home/${USER}/eurygaster_uploads
 $ docker-compose up
-# Now, all the images uploaded to application for inference can be seen in /home/eurygaster_uploads folder
-# To change mounting volume, create your custom directory and set it in MOUNTING_VOLUME parameter in .env.
+# Now, all the images uploaded to application for inference can be seen in <FOLDER> 
+# To change mounting volume, create your custom directory and set it in <MOUNTING_VOLUME> parameter in .env.
+# .env also stores: SUBNET, MASK, GATEWAY, application IP
 
 
 ```
