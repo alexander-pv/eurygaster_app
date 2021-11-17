@@ -3,7 +3,10 @@ services:
   web:
     build: .
     ports:
-      - "0.0.0.0:8501:8501"
+      - "8501:8501"
+    networks:
+      eurygaster_subnet:
+        ipv4_address: ${IP}
     volumes:
       - eurygaster_volume:/app/uploads
 volumes:
@@ -13,3 +16,10 @@ volumes:
       type: none
       o: bind
       device: ${MOUNTING_VOLUME}
+networks:
+  eurygaster_subnet:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: ${SUBNET}/${MASK}
+         gateway: ${GATEWAY}
