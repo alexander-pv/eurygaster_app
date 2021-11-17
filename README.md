@@ -26,7 +26,7 @@ $ mkdir /home/${USER}/eurygaster_uploads
 $ docker-compose up
 # Now, all the images uploaded to application for inference can be seen in <FOLDER> 
 # To change mounting volume, create your custom directory and set it in <MOUNTING_VOLUME> parameter in .env.
-# .env also stores: SUBNET, GATEWAY, application IP
+# .env also stores: SUBNET, MASK, GATEWAY, application IP
 
 
 ```
