@@ -8,10 +8,10 @@
 ![eurygaster_integriceps_example](./assets/e_integriceps_example.png)
 
 
-#### Setting up with Docker, Docker-compose:
+#### Set up the application with Docker, Docker-compose:
 
 ```bash
-# Create container with Dockerfile
+# Create container from Dockerfile
 $ docker build -t eurygaster_app:latest .
 # Create subnet for application, set static ip and run the app
 $ docker network create --subnet=172.55.0.0/29 eurygaster_subnet
@@ -28,5 +28,15 @@ $ docker-compose up
 # To change mounting volume, create your custom directory and set it in <MOUNTING_VOLUME> parameter in .env.
 # .env also stores: SUBNET, MASK, GATEWAY, application IP
 
+```
+#### Search images in Dockerhub:
 
+```bash
+$ docker search eurygaster_app
+```
+
+#### Pull recent image from Dockerhub:
+
+```bash
+$ docker pull alrdockerhub/eurygaster_app:latest
 ```
