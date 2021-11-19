@@ -16,7 +16,7 @@ $ docker build -t eurygaster_app:latest .
 # Create subnet for application, set static ip and run the app
 $ docker network create --subnet=172.55.0.0/29 eurygaster_subnet
 $ docker run --net eurygaster_subnet \
-             --ip 172.55.0.2 -p 8051:8051 --rm -t -d \
+             --ip 172.55.0.2 -p 8501:8501 --rm -t -d \
              -v /home/${USER}/eurygaster_uploads:/app/uploads \
              --name eurygaster_app eurygaster_app:latest
 
