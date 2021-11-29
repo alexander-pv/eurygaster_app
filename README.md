@@ -35,7 +35,7 @@ $ docker-compose up
 #### Set up the application with Docker. Windows:
 
 Basically, Docker containers works on Windows via Hyper-V or WSL2.
-However, there is some [limitations](https://docs.docker.com/desktop/windows/networking/) like the absence of docker0
+However, there are some [limitations](https://docs.docker.com/desktop/windows/networking/) like the absence of docker0
 network interface and  per-container ip addressing. To deal with such limitations windows containers can be exploited.
 Nonetheless, Windows containers are not a cure and in fact are large. 
 The repository provides an example with Windows Core Server 2019 version 1809.
