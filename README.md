@@ -61,6 +61,6 @@ $ docker search eurygaster_app
 ```bash
 # linux/amd64
 $ docker pull alrdockerhub/eurygaster_app:latest
-# windows/amd64 if WSL2 is not supported
+# windows/amd64 Windows Core Server 2019 version 1809
 $ docker pull alrdockerhub/eurygaster_app:latest_windowsservercore_1809
 ```
