@@ -19,6 +19,9 @@ RUN pip install -r requirements.txt
 
 EXPOSE 8501
 
+RUN mkdir $home\.streamlit
+COPY streamlit_default.toml $home\.streamlit\credentials.toml
+
 COPY src /app
 ENTRYPOINT ["streamlit", "run"]
-CMD ["eurygaster_app.py --server.headless true"]
+CMD ["eurygaster_app.py"]

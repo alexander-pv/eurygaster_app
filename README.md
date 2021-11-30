@@ -41,7 +41,7 @@ Nonetheless, Windows containers are not a cure and in fact are large.
 The repository provides an example with Windows Core Server 2019 version 1809.
 ```bash
 # Create container from Dockerfile
-> docker build -f ./dockerfiles/wincoreserver1809.Dockerfile -t eurygaster_app:latest_windowsservercore_1809 .
+> docker build -f .\dockerfiles\wincoreserver1809.Dockerfile -t eurygaster_app:latest_windowsservercore_1809 .
 # Create NAT for the application, set static ip and run the app
 > docker network create -d "nat" --subnet "10.244.0.0/29" eurygaster_nat
 > docker run --net eurygaster_nat `
