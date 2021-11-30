@@ -42,10 +42,10 @@ The repository provides an example with Windows Core Server 2019 version 1809.
 ```bash
 # Create container from Dockerfile
 > docker build -f .\dockerfiles\wincoreserver1809.Dockerfile -t eurygaster_app:latest_windowsservercore_1809 .
-# Create NAT for the application, set static ip and run the app
-> docker network create -d "nat" --subnet "10.244.0.0/29" eurygaster_nat
-> docker run --net eurygaster_nat `
-             --ip 10.244.0.2 -p 8501:8501 --rm -t -d `
+# You can use default Docker network interface NAT. For example, for subnet  172.19.16.0 
+> docker run --net nat `
+             --isolation process `
+             --ip 172.19.16.2 -p 8501:8501 --rm -t -d `
              -v C:\Users\eurygaster_uploads:C:\app\uploads `
              --name eurygaster_app eurygaster_app:latest_windowsservercore_1809
 ```
