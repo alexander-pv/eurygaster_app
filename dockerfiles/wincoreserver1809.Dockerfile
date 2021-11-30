@@ -19,8 +19,8 @@ RUN pip install -r requirements.txt
 
 EXPOSE 8501
 
-RUN mkdir $home\.streamlit
-COPY streamlit_default.toml $home\.streamlit\credentials.toml
+RUN mkdir /app/.streamlit
+COPY streamlit_default.toml /app/.streamlit/credentials.toml
 
 COPY src /app
 ENTRYPOINT ["streamlit", "run"]
