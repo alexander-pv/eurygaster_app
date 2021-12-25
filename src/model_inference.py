@@ -1,13 +1,11 @@
 import os
 from typing import Callable
-from typing import Tuple
 
 import numpy as np
 import onnxruntime as ort
 from PIL.JpegImagePlugin import JpegImageFile
 from scipy.special import softmax
 
-import constants as const
 import input_transform
 
 
@@ -41,42 +39,53 @@ class ONNXInference:
         return softmax(outputs).ravel()
 
 
-def get_confidence_dict(class_map: dict, model_output: np.array) -> dict:
-    """
-    Get confidence dict
-    :param class_map: dict
-    :param model_output: np.array
-    :return: dict
-    """
-    conf_dict = dict()
-    for i, conf in enumerate(model_output):
-        conf_dict.update({class_map[i]: "%.3f" % conf})
-    return conf_dict
+class EurygasterModels:
 
+    def __init__(self, models_config: tuple):
+        """
+        Wrapper for Eurygaster spp. models runtime
+        :param models_config:
+        """
+        self.models_config = models_config
+        self.onnx_models = []
+        self.build_models()
 
-def do_inference(pil_image: JpegImageFile) -> Tuple[dict, dict]:
-    """
-    Do the inference
-    :param pil_image: JpegImageFile
-    :return: (dict, dict)
-    """
-    onnx_bin_instance = ONNXInference(
-        onnx_model_name=os.path.join("onnx_model", const.onnx_bin_config["onnx_model"]),
-        input_name="mobilenetv2_input",
-        output_name="mobilenetv2_output",
-        preprocess=input_transform.get_input_transform(image_size=const.image_size, img_normalize=const.img_normalize),
-        class_map=const.onnx_bin_config["class_map"]
-    )
-    bin_result = get_confidence_dict(class_map=const.onnx_bin_config['class_map'],
-                                     model_output=onnx_bin_instance.run(image=pil_image))
+    def build_models(self) -> None:
+        """
+        Open onnxruntime inference sessions
+        :return: List[ONNXInference, ONNXInference]
+        """
+        for config in self.models_config:
+            self.onnx_models.append(
+                ONNXInference(
+                    onnx_model_name=os.path.join("onnx_model", config.model_name),
+                    input_name="mobilenetv2_input",
+                    output_name="mobilenetv2_output",
+                    preprocess=input_transform.get_input_transform(
+                        image_size=config.input_size, img_normalize=config.normalization
+                    ),
+                    class_map=config.class_map
+                )
+            )
 
-    onnx_eurg_instance = ONNXInference(
-        onnx_model_name=os.path.join("onnx_model", const.onnx_eurg_config["onnx_model"]),
-        input_name="mobilenetv2_input",
-        output_name="mobilenetv2_output",
-        preprocess=input_transform.get_input_transform(image_size=const.image_size, img_normalize=const.img_normalize),
-        class_map=const.onnx_eurg_config["class_map"]
-    )
-    eurg_result = get_confidence_dict(class_map=const.onnx_eurg_config['class_map'],
-                                      model_output=onnx_eurg_instance.run(image=pil_image))
-    return bin_result, eurg_result
+    @staticmethod
+    def get_confidence_dict(class_map: dict, model_output: np.array) -> dict:
+        """
+        Get confidence dict for a specific model
+        :param class_map: dict
+        :param model_output: np.array
+        :return: dict
+        """
+        conf_dict = dict()
+        for i, conf in enumerate(model_output):
+            conf_dict.update({class_map[i]: "%.3f" % conf})
+        return conf_dict
+
+    def __call__(self, pil_image: JpegImageFile) -> list:
+        outputs = []
+        for model in self.onnx_models:
+            outputs.append(
+                self.get_confidence_dict(class_map=model.class_map, model_output=model.run(image=pil_image)
+                                         )
+            )
+        return outputs
