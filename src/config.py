@@ -6,7 +6,7 @@ from typing import Any, Optional
 @dataclasses.dataclass
 class GeneralConfig:
     models_names: list
-    download_url: str = "https://github.com/alexander-pv/eurygaster_app/releases/download/v1.1.0/"
+    download_url: str = "https://github.com/alexander-pv/eurygaster_app/releases/download/v1.2.1/"
     upload_images: bool = True
     upload_folder_mb_limit: int = 10240
     docker_upload_path: str = os.path.join("/", "app", "uploads")
@@ -56,9 +56,8 @@ mm_conf = ModelConfig(model_hash="7e474b5aec7d7cf0b779c969307cd0997f6708aa",
                           1: "Eurygaster_dilaticollis",
                           2: "Eurygaster_integriceps",
                           3: "Eurygaster_laeviuscula",
-                          4: "Eurygaster_latus",
-                          5: "Eurygaster_maura",
-                          6: "Eurygaster_testudinaria"
+                          4: "Eurygaster_maura",
+                          5: "Eurygaster_testudinaria"
                       },
                       )
 
