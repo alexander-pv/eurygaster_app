@@ -1,5 +1,5 @@
-import os
 import glob
+import os
 from datetime import datetime
 from typing import Union
 
@@ -9,7 +9,7 @@ from PIL import Image, UnidentifiedImageError
 from PIL.JpegImagePlugin import JpegImageFile
 from streamlit.uploaded_file_manager import UploadedFile
 
-import constants as const
+import config as conf
 
 
 def open_image(file: UploadedFile) -> Union[JpegImageFile, None]:
@@ -43,9 +43,9 @@ def download_weights() -> None:
     :return: None
     """
     os.makedirs("onnx_model", exist_ok=True)
-    for name in const.models_names:
+    for name in conf.gen_config.models_names:
         if name not in os.listdir("onnx_model"):
-            r = requests.get(const.download_url + name)
+            r = requests.get(conf.gen_config.download_url + name)
             open(os.path.join("onnx_model", name), 'wb').write(r.content)
 
 
@@ -72,9 +72,13 @@ def image_upload(file: UploadedFile) -> None:
     if os.environ.get("DROPBOX_UPLOAD"):
         dropbox_upload(file=file)
     else:
-        check_folder(path=const.docker_upload_path)
-        with open(os.path.join(const.docker_upload_path, f"{get_datetime()}_{file.name}"), 'wb') as f:
-            f.write(file.getvalue())
+        check_folder(path=conf.gen_config.docker_upload_path)
+        try:
+            with open(os.path.join(conf.gen_config.docker_upload_path, f"{get_datetime()}_{file.name}"), 'wb') as f:
+                f.write(file.getvalue())
+        except FileNotFoundError:
+            with open(os.path.join(conf.gen_config.test_upload_path, f"{get_datetime()}_{file.name}"), 'wb') as f:
+                f.write(file.getvalue())
 
 
 def get_mb_folder_size(folder_path: str) -> float:
@@ -99,7 +103,7 @@ def check_folder(path: str) -> None:
     """
 
     mbs = get_mb_folder_size(path)
-    if mbs > const.upload_folder_mb_limit:
+    if mbs > conf.gen_config.upload_folder_mb_limit:
         files = glob.glob(os.path.join(path, "*"))
         for f in files:
             os.remove(f)

@@ -1,12 +1,14 @@
 import streamlit as st
 
-import constants as const
+import config as conf
 import model_inference
 import utils
 
 
 def app() -> None:
     utils.download_weights()
+    eurygaster_models = model_inference.EurygasterModels(models_config=(conf.bm_conf, conf.mm_conf))
+
     st.write("""
              # Eurygaster spp. classification
              """
@@ -18,14 +20,14 @@ def app() -> None:
 
         if pil_image:
             st.image(pil_image, use_column_width=True)
-            bin_result, eurg_result = model_inference.do_inference(pil_image=pil_image)
+            bin_result, eurg_result = eurygaster_models(pil_image=pil_image)
 
             st.write("Confidence that this is the picture of Eurygaster spp.:")
             st.write(bin_result)
             st.write("Confidence distribution of species if Eurygaster is in the picture:")
             st.write(eurg_result)
 
-            if const.upload_images:
+            if conf.gen_config.upload_images:
                 utils.image_upload(file)
 
         else:
