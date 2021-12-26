@@ -3,38 +3,28 @@ import streamlit as st
 import config as conf
 import model_inference
 import utils
+from pages import PlainTextPage, ModelPage
 
 
-def app() -> None:
+def main() -> None:
     utils.download_weights()
     eurygaster_models = model_inference.EurygasterModels(models_config=(conf.bm_conf, conf.mm_conf))
+    pages = {
+        'About': PlainTextPage(title='About', markdown_name='about.md'),
+        'How to use': PlainTextPage(title='How to use', markdown_name='how_to_use.md'),
+        'Getting accurate recognition': PlainTextPage(title='Getting accurate recognition',
+                                                      markdown_name='best_photo.md'),
+        'Model': ModelPage(title='Model', eurygaster_models=eurygaster_models)
+    }
 
-    st.write("""
-             # Eurygaster spp. classification
-             """
-             )
-    file = st.file_uploader("Please, upload an image file", type=["jpg", "jpeg"])
-    if file:
+    st.sidebar.title("Navigation")
+    selection = st.sidebar.radio("Sections", list(pages.keys()))
+    selected_page = pages[selection]
+    selected_lang = st.sidebar.selectbox('Language', ['ru', 'en'])
 
-        pil_image = utils.open_image(file)
-
-        if pil_image:
-            st.image(pil_image, use_column_width=True)
-            bin_result, eurg_result = eurygaster_models(pil_image=pil_image)
-
-            st.write("Confidence that this is the picture of Eurygaster spp.:")
-            st.write(bin_result)
-            st.write("Confidence distribution of species if Eurygaster is in the picture:")
-            st.write(eurg_result)
-
-            if conf.gen_config.upload_images:
-                utils.image_upload(file)
-
-        else:
-            st.write("The input contains undefined data. Perhaps it is a masked file of another data type.")
-    else:
-        st.text("No image input")
+    with st.spinner(f"Loading {selection} ..."):
+        selected_page.write(lang=selected_lang)
 
 
 if __name__ == '__main__':
-    app()
+    main()

@@ -7,7 +7,6 @@
 
 ![eurygaster_integriceps_example](./assets/e_integriceps_example.png)
 
-
 #### Set up the application with Docker:
 
 ```bash
