@@ -77,8 +77,9 @@ def image_upload(file: UploadedFile) -> None:
             with open(os.path.join(conf.gen_config.docker_upload_path, f"{get_datetime()}_{file.name}"), 'wb') as f:
                 f.write(file.getvalue())
         except FileNotFoundError:
-            with open(os.path.join(conf.gen_config.test_upload_path, f"{get_datetime()}_{file.name}"), 'wb') as f:
-                f.write(file.getvalue())
+            if conf.gen_config.test_upload_path:
+                with open(os.path.join(conf.gen_config.test_upload_path, f"{get_datetime()}_{file.name}"), 'wb') as f:
+                    f.write(file.getvalue())
 
 
 def get_mb_folder_size(folder_path: str) -> float:
