@@ -27,7 +27,7 @@ class Page(metaclass=ABCMeta):
         :return: str
         """
         if self.markdown_name:
-            with open(os.path.join('markdown', lang, self.markdown_name), 'r') as f:
+            with open(os.path.join('markdown', lang, self.markdown_name), 'r', encoding='utf8') as f:
                 text = ''.join(f.readlines())
         else:
             text = None
