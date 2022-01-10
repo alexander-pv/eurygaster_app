@@ -1,5 +1,6 @@
 import dataclasses
 import os
+import platform
 from typing import Any, Optional
 
 
@@ -10,7 +11,7 @@ class GeneralConfig:
     upload_images: bool = True
     upload_folder_mb_limit: int = 10240
     docker_upload_path: str = os.path.join("/", "app", "uploads")
-    test_upload_path: str = os.path.join(os.environ["HOME"])
+    test_upload_path: str or None = os.path.join(os.environ["HOME"]) if platform.system() == 'Linux' else None
 
 
 class ModelConfig:
