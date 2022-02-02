@@ -7,7 +7,7 @@ from typing import Any, Optional
 @dataclasses.dataclass
 class GeneralConfig:
     models_names: list
-    download_url: str = "https://github.com/alexander-pv/eurygaster_app/releases/download/v1.2.1/"
+    download_url: str = "https://github.com/alexander-pv/eurygaster_app/releases/download/v1.3.0/"
     upload_images: bool = True
     upload_folder_mb_limit: int = 10240
     docker_upload_path: str = os.path.join("/", "app", "uploads")
@@ -43,14 +43,14 @@ class ModelConfig:
         return self.model_template_name.replace('$hash$', self.model_hash)
 
 
-bm_conf = ModelConfig(model_hash="7dea07bbbad4bc69a33be5768672cb40ef60c344",
+bm_conf = ModelConfig(model_hash="0d03affcc3fe4555217e01aee7d73fed7ebdf35a",
                       model_template_name="model_$hash$_binary_calib.onnx",
                       class_map={
                           0: "Eurygaster",
                           1: "Non_Eurygaster"
                       }
                       )
-mm_conf = ModelConfig(model_hash="7e474b5aec7d7cf0b779c969307cd0997f6708aa",
+mm_conf = ModelConfig(model_hash="4fa9730aef422d53cf1ccb3db93da78d68991301",
                       model_template_name="model_$hash$_multiclass_calib.onnx",
                       class_map={
                           0: "Eurygaster_austriaca",
