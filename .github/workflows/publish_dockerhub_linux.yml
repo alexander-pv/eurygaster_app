@@ -1,0 +1,30 @@
+name: Build Docker (Linux) image and publish to DockerHub
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Application version'
+        required: true
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: DockerHub login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Build docker image
+        env:
+            DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+            APP_VERSION: ${{ github.event.inputs.version }}
+        run: docker build -f ./dockerfiles/linux.Dockerfile -t $DOCKER_USER/eurygaster_app:latest -t $DOCKER_USER/eurygaster_app:$APP_VERSION .
+
+      - name: Push docker image
+        run: docker push $DOCKER_USER/eurygaster_app --all-tags
+
