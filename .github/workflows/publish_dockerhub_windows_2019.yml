@@ -1,0 +1,30 @@
+name: Build Docker (Windows 2019) image and publish to DockerHub
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Application version'
+        required: true
+
+jobs:
+  build:
+    runs-on: 'windows-2019'
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: DockerHub login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Build docker image
+        env:
+            DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+            APP_VERSION: ${{ github.event.inputs.version }}
+        run: docker build -f ./dockerfiles/wincoreserver1809.Dockerfile -t $DOCKER_USER/eurygaster_app:latest_windowsservercore_1809 -t $DOCKER_USER/eurygaster_app:${APP_VERSION}_windowsservercore_1809 .
+
+      - name: Push docker image
+        run: docker push $DOCKER_USER/eurygaster_app --all-tags
+          
