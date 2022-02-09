@@ -23,7 +23,7 @@ jobs:
         env:
             DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
             APP_VERSION: ${{ github.event.inputs.version }}
-        run: docker build -f ./dockerfiles/wincoreserver1809.Dockerfile -t $env:DOCKER_USER/eurygaster_app:latest_windowsservercore_1809 -t $env:DOCKER_USER/eurygaster_app:${APP_VERSION}_windowsservercore_1809 .
+        run: docker build -f ./dockerfiles/wincoreserver1809.Dockerfile -t $env:DOCKER_USER/eurygaster_app:latest_windowsservercore_1809 -t $env:DOCKER_USER/eurygaster_app:${APP_VERSION}"_windowsservercore_1809" .
 
       - name: Push docker image
         env:
