@@ -31,5 +31,5 @@ jobs:
           APP_VERSION: ${{ github.event.inputs.version }}
         run: |
           docker push $env:DOCKER_USER/eurygaster_app:latest_windowsservercore_1809
-          docker push $env:DOCKER_USER/eurygaster_app:$env:APP_VERSION_windowsservercore_1809
+          docker push $env:DOCKER_USER/eurygaster_app:$env:APP_VERSION"_windowsservercore_1809"
           
