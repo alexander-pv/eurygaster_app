@@ -27,5 +27,7 @@ jobs:
         run: docker build -f ./dockerfiles/linux.Dockerfile -t $DOCKER_USER/eurygaster_app:latest -t $DOCKER_USER/eurygaster_app:$APP_VERSION .
 
       - name: Push docker image
-        run: docker push $DOCKER_USER/eurygaster_app --all-tags
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: docker push $DOCKER_USER/eurygaster_app
 
