@@ -6,7 +6,7 @@ import onnxruntime as ort
 from PIL.JpegImagePlugin import JpegImageFile
 from scipy.special import softmax
 
-import input_transform
+from backend import input_transform
 
 
 class ONNXInference:
@@ -58,7 +58,7 @@ class EurygasterModels:
         for config in self.models_config:
             self.onnx_models.append(
                 ONNXInference(
-                    onnx_model_name=os.path.join("onnx_model", config.model_name),
+                    onnx_model_name=os.path.join("backend", "onnx_model", config.model_name),
                     input_name="mobilenetv2_input",
                     output_name="mobilenetv2_output",
                     preprocess=input_transform.get_input_transform(

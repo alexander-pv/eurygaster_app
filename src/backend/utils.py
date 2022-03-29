@@ -1,7 +1,7 @@
 import glob
 import os
 from datetime import datetime
-from typing import Union
+from typing import Union, Optional
 
 import dropbox
 import requests
@@ -9,7 +9,7 @@ from PIL import Image, UnidentifiedImageError
 from PIL.JpegImagePlugin import JpegImageFile
 from streamlit.uploaded_file_manager import UploadedFile
 
-import config as conf
+from backend import config as conf
 
 
 def open_image(file: UploadedFile) -> Union[JpegImageFile, None]:
@@ -37,16 +37,18 @@ def get_datetime() -> str:
     return dt
 
 
-def download_weights() -> None:
+def download_weights(model_path: Optional[str] = None) -> None:
     """
     Download ONNX weights if necessary
     :return: None
     """
-    os.makedirs("onnx_model", exist_ok=True)
+    if model_path is None:
+        model_path = os.path.join("backend", "onnx_model")
+    os.makedirs(model_path, exist_ok=True)
     for name in conf.gen_config.models_names:
-        if name not in os.listdir("onnx_model"):
+        if name not in os.listdir(model_path):
             r = requests.get(conf.gen_config.download_url + name)
-            open(os.path.join("onnx_model", name), 'wb').write(r.content)
+            open(os.path.join(model_path, name), 'wb').write(r.content)
 
 
 def dropbox_upload(file: UploadedFile) -> None:

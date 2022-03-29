@@ -1,9 +1,10 @@
 import streamlit as st
 
-import config as conf
-import model_inference
-import utils
-from pages import PlainTextPage, ModelPage
+from backend import model_inference
+from backend import utils
+from backend import config as conf
+
+from front.pages import PlainTextPage, ModelPage
 
 
 def main() -> None:

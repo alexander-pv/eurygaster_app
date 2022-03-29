@@ -4,9 +4,9 @@ from typing import Optional
 
 import streamlit as st
 
-import config as conf
-import utils
-from model_inference import EurygasterModels
+from backend import config as conf
+from backend import utils
+from backend.model_inference  import EurygasterModels
 
 
 class Page(metaclass=ABCMeta):
@@ -27,7 +27,7 @@ class Page(metaclass=ABCMeta):
         :return: str
         """
         if self.markdown_name:
-            with open(os.path.join('markdown', lang, self.markdown_name), 'r', encoding='utf8') as f:
+            with open(os.path.join('front', 'markdown', lang, self.markdown_name), 'r', encoding='utf8') as f:
                 text = ''.join(f.readlines())
         else:
             text = None
