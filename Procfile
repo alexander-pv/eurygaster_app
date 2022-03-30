@@ -1,1 +1,2 @@
-web: sh setup.sh && cd src && ./wrapped_run.sh
+server: python ./backend/inference_server.py
+web: sh setup.sh && cd src && streamlit run ./front/eurygaster_app.py
