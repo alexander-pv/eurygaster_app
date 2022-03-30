@@ -12,4 +12,4 @@ RUN mkdir C:/Users/ContainerAdministrator/.streamlit
 COPY streamlit_default.toml C:/Users/ContainerAdministrator/.streamlit/credentials.toml
 
 COPY src /app
-ENTRYPOINT ["./wrapped_run.sh"]
+ENTRYPOINT ["powershell", "./wrapped_run.bat"]
