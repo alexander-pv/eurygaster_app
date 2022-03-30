@@ -1,5 +1,5 @@
 import os
-from typing import Callable
+from typing import Callable, Optional
 
 import numpy as np
 import onnxruntime as ort
@@ -7,6 +7,7 @@ from PIL.JpegImagePlugin import JpegImageFile
 from scipy.special import softmax
 
 import input_transform
+import utils
 
 
 class ONNXInference:
@@ -41,13 +42,15 @@ class ONNXInference:
 
 class EurygasterModels:
 
-    def __init__(self, models_config: tuple):
+    def __init__(self, models_config: tuple, model_path: Optional[str] = None):
         """
         Wrapper for Eurygaster spp. models runtime
         :param models_config:
         """
+        self.model_path = model_path
         self.models_config = models_config
         self.onnx_models = []
+        utils.download_weights(model_path=self.model_path)
         self.build_models()
 
     def build_models(self) -> None:

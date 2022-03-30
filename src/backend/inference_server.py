@@ -30,7 +30,6 @@ async def predict_eurygaster(file: UploadFile = File(...), name: str = Body(...,
 
 
 def main() -> None:
-    utils.download_weights()
     uvicorn.run("inference_server:app",
                 host=conf.gen_config.server_host,
                 port=conf.gen_config.server_port,
