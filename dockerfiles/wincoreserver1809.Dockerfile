@@ -12,5 +12,4 @@ RUN mkdir C:/Users/ContainerAdministrator/.streamlit
 COPY streamlit_default.toml C:/Users/ContainerAdministrator/.streamlit/credentials.toml
 
 COPY src /app
-ENTRYPOINT ["streamlit", "run"]
-CMD ["eurygaster_app.py"]
+ENTRYPOINT ["./wrapped_run.sh"]

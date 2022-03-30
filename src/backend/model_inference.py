@@ -6,7 +6,7 @@ import onnxruntime as ort
 from PIL.JpegImagePlugin import JpegImageFile
 from scipy.special import softmax
 
-from backend import input_transform
+import input_transform
 
 
 class ONNXInference:
@@ -81,7 +81,7 @@ class EurygasterModels:
             conf_dict.update({class_map[i]: "%.3f" % conf})
         return conf_dict
 
-    def __call__(self, pil_image: JpegImageFile) -> list:
+    def __call__(self, pil_image) -> list:
         outputs = []
         for model in self.onnx_models:
             outputs.append(

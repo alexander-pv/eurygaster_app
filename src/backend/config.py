@@ -6,12 +6,15 @@ from typing import Any, Optional
 
 @dataclasses.dataclass
 class GeneralConfig:
-    models_names: list
+    models_names: list or tuple
+    server_host: str = '0.0.0.0'
+    server_port: int = 15000
     download_url: str = "https://github.com/alexander-pv/eurygaster_app/releases/download/v1.3.0/"
     upload_images: bool = True
     upload_folder_mb_limit: int = 10240
     docker_upload_path: str = os.path.join("/", "app", "uploads")
     test_upload_path: str or None = os.path.join(os.environ["HOME"]) if platform.system() == 'Linux' else None
+    debug: bool = False
 
 
 class ModelConfig:

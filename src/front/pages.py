@@ -2,11 +2,9 @@ import os
 from abc import abstractmethod, ABCMeta
 from typing import Optional
 
+import requests
 import streamlit as st
-
-from backend import config as conf
-from backend import utils
-from backend.model_inference  import EurygasterModels
+import utils
 
 
 class Page(metaclass=ABCMeta):
@@ -85,7 +83,7 @@ class PlainTextPage(Page):
 
 class ModelPage(Page):
 
-    def __init__(self, eurygaster_models: EurygasterModels, *args, **kwargs):
+    def __init__(self, backend: str, *args, **kwargs):
         """
         Streamlit page with models inference
         :param eurygaster_models: EurygasterModels class
@@ -93,7 +91,7 @@ class ModelPage(Page):
         :param kwargs:
         """
         super().__init__(*args, **kwargs)
-        self.eurygaster_models = eurygaster_models
+        self.backend = backend
         self.messages = {'ru': ("Пожалуйста, загрузите фотографию",
                                 "Вероятность, что на фотографии Eurygaster spp.:",
                                 "Распределение вероятностей принадлежности к каждому из видов Eurygaster:",
@@ -108,25 +106,28 @@ class ModelPage(Page):
                                 )
                          }
 
+    def post_predict(self, file) -> dict:
+        return requests.post(self.backend,
+                             files={"file": (f"{file.name};type=image/jpeg", file.getvalue()),
+                                    "name": (None, file.name),
+                                    }
+
+                             ).json()
+
     def write(self, lang: str) -> None:
         with st.spinner(f"Loading {self.title} ..."):
             self.set_title()
             msg = self.messages[lang]
-
             file = st.file_uploader(msg[0], type=["jpg", "jpeg"])
             if file:
                 pil_image = utils.open_image(file)
                 if pil_image:
                     st.image(pil_image, use_column_width=True)
-                    bin_result, eurg_result = self.eurygaster_models(pil_image=pil_image)
-
+                    res = self.post_predict(file)
                     st.write(msg[1])
-                    st.write(bin_result)
+                    st.write(res['binary'])
                     st.write(msg[2])
-                    st.write(eurg_result)
-
-                    if conf.gen_config.upload_images:
-                        utils.image_upload(file)
+                    st.write(res['multiclass'])
 
                 else:
                     st.write(msg[3])
