@@ -1,1 +1,1 @@
-web: sh setup.sh && cd src && streamlit run eurygaster_app.py
+web: sh setup.sh && cd src && sh wrapped_run.sh
