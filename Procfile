@@ -1,1 +1,1 @@
-web: sh setup.sh && cd src && sh wrapped_run.sh
+web: sh setup.sh && cd src && ./wrapped_run.sh
