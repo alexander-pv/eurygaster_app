@@ -8,5 +8,5 @@ RUN pip install -r requirements.txt
 EXPOSE 8501
 
 COPY src /app
-ENTRYPOINT ["streamlit", "run"]
-CMD ["eurygaster_app.py"]
+ENTRYPOINT ["/bin/bash"]
+CMD ["./wrapped_run.sh"]

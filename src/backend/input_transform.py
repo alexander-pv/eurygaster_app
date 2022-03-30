@@ -18,7 +18,8 @@ class PILImageTransform:
         :param image: JpegImageFile
         :return: np.array
         """
-        assert type(image) == JpegImageFile
+        if type(image) != JpegImageFile:
+            raise AssertionError(f'Unexpected image type: {type(image)}. Expecting JpegImageFile.')
         for op in self.transform_list:
             image = op(image)
         return image

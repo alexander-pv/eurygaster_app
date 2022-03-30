@@ -1,29 +1,14 @@
 import glob
 import os
 from datetime import datetime
-from typing import Union
+from io import BytesIO
+from typing import Optional
 
 import dropbox
 import requests
-from PIL import Image, UnidentifiedImageError
-from PIL.JpegImagePlugin import JpegImageFile
-from streamlit.uploaded_file_manager import UploadedFile
+from PIL import Image
 
 import config as conf
-
-
-def open_image(file: UploadedFile) -> Union[JpegImageFile, None]:
-    """
-    Open an image with PIL.Image
-    :param file: streamlit UploadedFile
-    :return: JpegImageFile or None
-    """
-
-    try:
-        img = Image.open(file)
-    except UnidentifiedImageError:
-        img = None
-    return img
 
 
 def get_datetime() -> str:
@@ -37,49 +22,64 @@ def get_datetime() -> str:
     return dt
 
 
-def download_weights() -> None:
+def download_weights(model_path: Optional[str] = None) -> None:
     """
     Download ONNX weights if necessary
     :return: None
     """
-    os.makedirs("onnx_model", exist_ok=True)
+    if model_path is None:
+        model_path = os.path.join("backend", "onnx_model")
+    os.makedirs(model_path, exist_ok=True)
     for name in conf.gen_config.models_names:
-        if name not in os.listdir("onnx_model"):
+        if name not in os.listdir(model_path):
             r = requests.get(conf.gen_config.download_url + name)
-            open(os.path.join("onnx_model", name), 'wb').write(r.content)
+            open(os.path.join(model_path, name), 'wb').write(r.content)
 
 
-def dropbox_upload(file: UploadedFile) -> None:
+def upload_dropbox(file: bytes, name: str) -> None:
     """
     Upload image to dropbox
-    :param file: streamlit UploadedFile
+    :param file: file in bytes
+    :param name filename
     :return: None
     """
 
     client = dropbox.dropbox_client.Dropbox(os.environ["UPLOAD_TOKEN"])
-    client.files_upload(f=file.getvalue(),
-                        path=f"/{get_datetime()}_{file.name}",
+    client.files_upload(f=file,
+                        path=f"/{get_datetime()}_{name}",
                         mode=dropbox.files.WriteMode("overwrite")
                         )
 
 
-def image_upload(file: UploadedFile) -> None:
+async def upload_image(file: bytes, name: str) -> None:
     """
     Save image to a specified directory
-    :param file: streamlit UploadedFile
+    :param file: image in bytes
+    :param name filename
     :return: None
     """
-    if os.environ.get("DROPBOX_UPLOAD"):
-        dropbox_upload(file=file)
-    else:
-        check_folder(path=conf.gen_config.docker_upload_path)
-        try:
-            with open(os.path.join(conf.gen_config.docker_upload_path, f"{get_datetime()}_{file.name}"), 'wb') as f:
-                f.write(file.getvalue())
-        except FileNotFoundError:
-            if conf.gen_config.test_upload_path:
-                with open(os.path.join(conf.gen_config.test_upload_path, f"{get_datetime()}_{file.name}"), 'wb') as f:
-                    f.write(file.getvalue())
+    if conf.gen_config.upload_images:
+        if os.environ.get("DROPBOX_UPLOAD"):
+            upload_dropbox(file=file, name=name)
+        else:
+            check_folder(path=conf.gen_config.docker_upload_path)
+            try:
+                with open(os.path.join(conf.gen_config.docker_upload_path, f"{get_datetime()}_{name}"), 'wb') as f:
+                    f.write(file)
+            except FileNotFoundError:
+                if conf.gen_config.test_upload_path:
+                    with open(os.path.join(conf.gen_config.test_upload_path, f"{get_datetime()}_{name}"), 'wb') as f:
+                        f.write(file)
+
+
+def read_image(file: bytes) -> Image.Image:
+    """
+    Read PIL image from bytes
+    :param file: bytes
+    :return: Image.Image
+    """""
+    image = Image.open(BytesIO(file))
+    return image
 
 
 def get_mb_folder_size(folder_path: str) -> float:
