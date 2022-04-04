@@ -11,7 +11,7 @@ The highest accuracy of the determination will be achieved if the following cond
 This often happens when you take pictures in the bright sun (very contrasting lighting). To soften the light, the object can,
 for example, be shielded from the sun with your body or be covered with a white sheet of thin paper, 
 or any other translucent material.
-5. Try to void blur. The image turns out to be blurry most often when shooting with hands in low-light conditions.
+5. Try to avoid blur. The image turns out to be blurry most often when shooting with hands in low-light conditions.
 If there is little light (cloudy weather, shooting indoors), 
 it is best to fix the camera or smartphone on a tripod, otherwise rest your elbows on the table 
 or press the photographing device to a fixed support.
