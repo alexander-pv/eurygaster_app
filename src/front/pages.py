@@ -2,8 +2,10 @@ import os
 from abc import abstractmethod, ABCMeta
 from typing import Optional
 
+import plotly.graph_objects as go
 import requests
 import streamlit as st
+
 import utils
 
 
@@ -83,7 +85,7 @@ class PlainTextPage(Page):
 
 class ModelPage(Page):
 
-    def __init__(self, backend: str, *args, **kwargs):
+    def __init__(self, backend: str, binary_model_threshold: float = 0.5, *args, **kwargs):
         """
         Streamlit page with models inference
         :param eurygaster_models: EurygasterModels class
@@ -92,6 +94,7 @@ class ModelPage(Page):
         """
         super().__init__(*args, **kwargs)
         self.backend = backend
+        self.binary_model_threshold = binary_model_threshold
         self.messages = {'ru': ("Пожалуйста, загрузите фотографию",
                                 "Вероятность, что на фотографии Eurygaster spp.:",
                                 "Распределение вероятностей принадлежности к каждому из видов Eurygaster:",
@@ -114,6 +117,19 @@ class ModelPage(Page):
 
                              ).json()
 
+    def make_barplot(self, multiclass_output: dict) -> None:
+        """
+        Make a barplot for multiclass confidence values
+        :param multiclass_output: output of the multiclass model
+        :return:
+        """
+        sorted_output = sorted(multiclass_output.items(), key=lambda x: x[1], reverse=True)
+        class_names, class_confidence = (x[0] for x in sorted_output), (float(x[1]) for x in sorted_output)
+        fig = go.Figure([go.Bar(x=tuple(class_names), y=tuple(class_confidence))])
+        fig.update_layout(yaxis_title='Class confidence', xaxis_title='Species')
+        fig.update_traces(textfont_size=12, textangle=0, textposition="outside", cliponaxis=False)
+        st.plotly_chart(fig, use_container_width=True)
+
     def write(self, lang: str) -> None:
         with st.spinner(f"Loading {self.title} ..."):
             self.set_title()
@@ -126,8 +142,11 @@ class ModelPage(Page):
                     res = self.post_predict(file)
                     st.write(msg[1])
                     st.write(res['binary'])
-                    st.write(msg[2])
-                    st.write(res['multiclass'])
+                    if float(res['binary']['Eurygaster']) > self.binary_model_threshold:
+                        if float(res['binary']['Eurygaster']) > self.binary_model_threshold:
+                            st.write(msg[2])
+                            st.write(res['multiclass'])
+                            self.make_barplot(res['multiclass'])
 
                 else:
                     st.write(msg[3])
